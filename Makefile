@@ -15,6 +15,9 @@ clean:
 build-image:
 	docker build -t k6-presentation:latest .
 
+delete-image:
+	docker rmi k6-presentation:latest
+
 run-temp-container: build-image
 	docker run \
 		--rm \
@@ -42,3 +45,16 @@ create-container: remove-container
 
 run-container:
 	docker run -it k6-presentation
+
+test:
+	docker run --network=host --rm -i grafana/k6 run - <test/stages.js
+
+# https://hub.docker.com/r/grafana/xk6
+build-k6:
+	docker run --network=host --rm -it \
+		-u "$(id -u):$(id -g)" \
+		-v "${PWD}:/xk6" \
+		grafana/xk6 build v0.46.0 \
+			--with github.com/Juandavi1/xk6-prompt@0.0.1
+
+
