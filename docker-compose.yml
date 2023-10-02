@@ -1,9 +1,19 @@
-version: '3.4'
+version: "3"
 
 services:
   api:
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      .
+    image: k6-presentation:latest
     ports:
       - 8000:8000
+    entrypoint: [
+      "gunicorn",
+      "app.main:app",
+      "--workers",
+      "1",
+      "--worker-class",
+      "uvicorn.workers.UvicornWorker",
+      "--bind",
+      "0.0.0.0:8000",
+    ]

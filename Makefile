@@ -12,13 +12,13 @@ clean:
 	@rm -f coverage.xml
 	@rm -f *.log
 
-build-image:
+delete-image:
+	docker rmi k6-presentation:latest || true
+
+build-image: delete-image
 	docker build -t k6-presentation:latest .
 
-delete-image:
-	docker rmi k6-presentation:latest
-
-run-temp-container: build-image
+run-api: build-image
 	docker run \
 		--rm \
 		-it \
@@ -26,28 +26,20 @@ run-temp-container: build-image
 		k6-presentation:latest \
 		gunicorn app.main:app \
 		--workers $(workers) \
-		--worker-class \
-		uvicorn.workers.UvicornWorker \
-		--bind 0.0.0.0:8000
-
-remove-container:
-	docker rm k6-presentation || true
-
-create-container: remove-container
-	docker create \
-		--name k6-presentation \
-		--network=host \
-		k6-presentation:latest \
-		gunicorn app.main:app \
-		--workers $(workers) \
 		--worker-class uvicorn.workers.UvicornWorker \
 		--bind 0.0.0.0:8000
 
+delete-container:
+	docker rm k6-presentation || true
+
+create-container: delete-container build-image
+	docker create --name k6-presentation k6-presentation:latest
+
 run-container:
-	docker run -it k6-presentation
+	docker run --network=host -it k6-presentation
 
 test:
-	docker run --network=host --rm -i grafana/k6 run - <test/stages.js
+	docker run --network=host --rm -i grafana/k6 run - <test/$(t).js
 
 # https://hub.docker.com/r/grafana/xk6
 build-k6:
