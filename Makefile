@@ -47,6 +47,7 @@ build-k6:
 		-u "$(id -u):$(id -g)" \
 		-v "${PWD}:/xk6" \
 		grafana/xk6 build v0.46.0 \
-			--with github.com/Juandavi1/xk6-prompt@0.0.1
+			--with github.com/Juandavi1/xk6-prompt@0.0.1 \
+			--with github.com/grafana/xk6-dashboard@latest
 
 

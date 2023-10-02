@@ -14,5 +14,5 @@ t=00-hello-world make test
 # O teste `03-lifecycle+extensions` utiliza extensões k6, e portanto precisa de um binário customizado:
 
 make build-k6
-./k6 run test/03-lifecycle+extensions.js
+./k6 run --out 'dashboard=open=true&period=3s' test/03-lifecycle+extensions.js
 ```
